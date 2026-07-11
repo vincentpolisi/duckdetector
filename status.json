@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "generated_at": null,
-  "measuring_since": null,
+  "generated_at": "2026-07-11T20:18:04.464Z",
+  "measuring_since": "2026-07-11",
   "sla": {
     "committed": false,
     "target": 99.9,
@@ -11,13 +11,31 @@
     {
       "id": "sms-inbound",
       "name": "Inbound SMS",
-      "description": "Text arrives from a carrier and lands in the correct Slack channel",
-      "status": "no_data"
+      "description": "",
+      "status": "operational"
     },
     {
       "id": "sms-outbound",
       "name": "Outbound SMS",
-      "description": "Message sent from Slack is accepted by the carrier and delivered",
+      "description": "",
+      "status": "operational"
+    },
+    {
+      "id": "admin",
+      "name": "Admin console",
+      "description": "",
+      "status": "operational"
+    },
+    {
+      "id": "email-platform",
+      "name": "Email platform (smack!)",
+      "description": "",
+      "status": "operational"
+    },
+    {
+      "id": "voice",
+      "name": "Voice (qwack!)",
+      "description": "",
       "status": "no_data"
     },
     {
@@ -31,24 +49,6 @@
       "name": "Email-to-SMS gateway",
       "description": "Email routed to a mobile number",
       "status": "no_data"
-    },
-    {
-      "id": "admin",
-      "name": "Admin console",
-      "description": "Routing and blocklist administration",
-      "status": "no_data"
-    },
-    {
-      "id": "email-platform",
-      "name": "Email platform (smack!)",
-      "description": "Outbound email sending and list management",
-      "status": "no_data"
-    },
-    {
-      "id": "voice",
-      "name": "Voice (qwack!)",
-      "description": "Inbound and outbound calling",
-      "status": "no_data"
     }
   ],
   "upstream": [
@@ -56,15 +56,22 @@
       "id": "twilio",
       "name": "Twilio",
       "description": "Carrier for SMS, MMS and voice — third party, outside our control",
-      "status": "no_data"
+      "status": "operational"
     },
     {
       "id": "slack",
       "name": "Slack",
       "description": "Message interface — third party, outside our control",
-      "status": "no_data"
+      "status": "operational"
     }
   ],
-  "history": [],
+  "history": [
+    {
+      "date": "Sat Jul 11",
+      "uptime": 80,
+      "state": "major_outage",
+      "incidents": 1
+    }
+  ],
   "incidents": []
 }
