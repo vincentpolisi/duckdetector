@@ -343,7 +343,10 @@
     });
   }
   function fmtDate(iso) {
-    var d = new Date(iso);
+    // Date-only strings (YYYY-MM-DD) parse as UTC midnight, which renders as the
+    // PREVIOUS day in any timezone behind UTC. Parse them as LOCAL instead.
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso));
+    var d = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(iso);
     return isNaN(d) ? String(iso) : d.toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' });
   }
   function fmtTime(iso) {
