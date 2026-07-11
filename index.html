@@ -99,6 +99,14 @@
   .prose p { color:rgba(253,244,249,.85); line-height:1.75; margin-bottom:1.1rem; max-width:72ch; font-size:1.02rem; }
   .prose strong { color:var(--cream); font-weight:700; }
 
+  .prose h3 {
+  font-size: clamp(1.05rem, 2.4vw, 1.25rem);
+  font-weight: 800;
+  color: var(--duck);
+  margin: 2rem 0 .9rem;
+  letter-spacing: -.01em;
+}
+
   /* ---------- component rows ---------- */
   .comp { border:1px solid var(--line); border-radius:16px; overflow:hidden; background:rgba(255,255,255,.035); }
   .row {
@@ -176,7 +184,7 @@
 
   <!-- ===== HERO ===== -->
   <header class="hero">
-    <img class="duck" src="assets/duck-detective.png" alt="Duck Detector — the twack! platform watchdog">
+    <img class="duck" src="assets/duck-detective.png" alt="Duck Detector — the twack! platform watchduck">
     <p class="eyebrow">Independent availability monitoring</p>
     <h1>duck detector<span class="bang">!</span></h1>
     <p class="tagline">We watch the ducks. Somebody has to.</p>
@@ -193,7 +201,7 @@
     <h2>What this is</h2>
     <div class="prose">
       <p>
-        <strong>Duck Detector is the watchdog for the twack! suite</strong> — the text, email and voice
+        <strong>Duck Detector is the</strong> <s>watchdog</s> <strong> watchduck for the qwack! suite</strong> — the text, email and voice
         platform behind twack!, smack! and qwack!. It exists to answer one question honestly, at any hour,
         without us being asked: <strong>is the platform actually working right now?</strong>
       </p>
@@ -204,6 +212,7 @@
         on infrastructure that shares no server, no network and no account with the systems it watches.
         If we go dark, this page stays lit — and tells you so.
       </p>
+      <h3>...but who's watching the watchers? 🧐</h3>
       <p>
         The design principle is simple: <strong>every watcher is itself watched, and no alert path shares a
         failure domain with the thing it monitors.</strong> Checks that quietly stop running are the most
@@ -305,7 +314,7 @@
   </section>
 
   <footer>
-    <div>Duck Detector — the watchdog for <a href="https://qwack.app">twack! · smack! · qwack!</a></div>
+    <div>Duck Detector — the <s>watchdog</s> <b>watchduck</b> for <a href="https://qwack.app">twack! · smack! · qwack! · sqwack!</a></div>
     <div class="suite">Built to be owned, not rented</div>
   </footer>
 
