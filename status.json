@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "generated_at": null,
+  "measuring_since": null,
+  "sla": {
+    "committed": false,
+    "target": 99.9,
+    "note": "No contractual service level is published until sufficient measured history exists."
+  },
+  "components": [
+    {
+      "id": "sms-inbound",
+      "name": "Inbound SMS",
+      "description": "Text arrives from a carrier and lands in the correct Slack channel",
+      "status": "no_data"
+    },
+    {
+      "id": "sms-outbound",
+      "name": "Outbound SMS",
+      "description": "Message sent from Slack is accepted by the carrier and delivered",
+      "status": "no_data"
+    },
+    {
+      "id": "delivery-receipts",
+      "name": "Delivery receipts",
+      "description": "Carrier delivery and failure receipts are received and reported",
+      "status": "no_data"
+    },
+    {
+      "id": "email-gateway",
+      "name": "Email-to-SMS gateway",
+      "description": "Email routed to a mobile number",
+      "status": "no_data"
+    },
+    {
+      "id": "admin",
+      "name": "Admin console",
+      "description": "Routing and blocklist administration",
+      "status": "no_data"
+    },
+    {
+      "id": "email-platform",
+      "name": "Email platform (smack!)",
+      "description": "Outbound email sending and list management",
+      "status": "no_data"
+    },
+    {
+      "id": "voice",
+      "name": "Voice (qwack!)",
+      "description": "Inbound and outbound calling",
+      "status": "no_data"
+    }
+  ],
+  "upstream": [
+    {
+      "id": "twilio",
+      "name": "Twilio",
+      "description": "Carrier for SMS, MMS and voice — third party, outside our control",
+      "status": "no_data"
+    },
+    {
+      "id": "slack",
+      "name": "Slack",
+      "description": "Message interface — third party, outside our control",
+      "status": "no_data"
+    }
+  ],
+  "history": [],
+  "incidents": []
+}

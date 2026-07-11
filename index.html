@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Duck Detector — twack! platform status</title>
+<meta name="description" content="Independent, off-cloud availability monitoring for the twack! communications suite. Measured uptime, published openly.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="icon" type="image/png" href="/assets/duck-detective.png">
+<link rel="apple-touch-icon" href="/assets/duck-detective.png">
+<link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;700;800;900&family=Fraunces:opsz,wght@9..144,400;9..144,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --duck:    #f4b400;
+    --magenta: #d0207f;
+    --purple:  #802090;
+    --ink:     #0d0a12;
+    --ink-2:   #16111d;
+    --cream:   #fdf4f9;
+    --muted:   rgba(253,244,249,0.62);
+    --line:    rgba(253,244,249,0.12);
+    --ok:      #2ecc71;
+    --warn:    #f5a524;
+    --down:    #ef4444;
+    --nodata:  rgba(253,244,249,0.14);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'League Spartan', sans-serif;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(208,32,127,0.20), transparent 45%),
+      radial-gradient(circle at 88% 82%, rgba(128,32,144,0.22), transparent 48%),
+      linear-gradient(170deg, var(--ink) 0%, var(--ink-2) 100%);
+    background-color:var(--ink);
+    color:var(--cream);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  body::after {
+    content:""; position:fixed; inset:0; pointer-events:none; opacity:0.045; z-index:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap { max-width:1000px; margin:0 auto; padding:0 6vw; position:relative; z-index:1; }
+
+  /* ---------- hero ---------- */
+  .hero { text-align:center; padding:7vh 0 2vh; }
+  .duck {
+    width:clamp(200px, 30vw, 290px); height:auto;
+    filter:drop-shadow(0 22px 46px rgba(0,0,0,0.6));
+    animation:bob 5s ease-in-out infinite, fadeUp .9s ease both;
+  }
+  @keyframes bob { 0%,100%{transform:translateY(0) rotate(-1deg);} 50%{transform:translateY(-12px) rotate(1deg);} }
+  .eyebrow {
+    font-size:clamp(.68rem,1.5vw,.8rem); letter-spacing:.42em; text-transform:uppercase;
+    font-weight:600; color:var(--muted); margin:1.8rem 0 .7rem; animation:fadeUp .9s ease .1s both;
+  }
+  h1 {
+    font-size:clamp(2.4rem,7.5vw,4.6rem); font-weight:900; letter-spacing:-.02em; line-height:.95;
+    animation:fadeUp .9s ease .2s both;
+  }
+  h1 .bang { color:var(--duck); }
+  .tagline {
+    font-family:'Fraunces',serif; font-style:italic; font-weight:400;
+    font-size:clamp(1rem,2.4vw,1.4rem); color:rgba(253,244,249,.9);
+    margin-top:1rem; animation:fadeUp .9s ease .3s both;
+  }
+
+  /* ---------- overall status banner ---------- */
+  .banner {
+    margin:3.2rem auto 0; max-width:720px;
+    display:flex; align-items:center; gap:1rem; justify-content:center;
+    padding:1.15rem 1.5rem; border-radius:16px;
+    border:1px solid var(--line); background:rgba(255,255,255,.05);
+    backdrop-filter:blur(8px); animation:fadeUp .9s ease .4s both;
+  }
+  .banner.ok      { border-color:rgba(46,204,113,.45); background:rgba(46,204,113,.10); }
+  .banner.warn    { border-color:rgba(245,165,36,.45); background:rgba(245,165,36,.10); }
+  .banner.down    { border-color:rgba(239,68,68,.45);  background:rgba(239,68,68,.10); }
+  .banner.nodata  { border-color:var(--line); }
+  .banner .dot { width:12px; height:12px; border-radius:50%; background:var(--nodata); flex:none; }
+  .banner.ok   .dot { background:var(--ok);   box-shadow:0 0 0 0 rgba(46,204,113,.7); animation:pulse 2.2s infinite; }
+  .banner.warn .dot { background:var(--warn); }
+  .banner.down .dot { background:var(--down); box-shadow:0 0 0 0 rgba(239,68,68,.7); animation:pulse 1.2s infinite; }
+  @keyframes pulse { 70%{box-shadow:0 0 0 12px rgba(0,0,0,0);} 100%{box-shadow:0 0 0 0 rgba(0,0,0,0);} }
+  .banner .msg { font-weight:700; font-size:clamp(1rem,2.4vw,1.2rem); letter-spacing:-.01em; }
+  .banner .ts  { font-size:.78rem; color:var(--muted); margin-left:auto; letter-spacing:.04em; }
+  @media (max-width:640px){ .banner{flex-wrap:wrap;} .banner .ts{margin-left:0; width:100%; text-align:center;} }
+
+  /* ---------- sections ---------- */
+  section { margin-top:5.5rem; }
+  h2 {
+    font-size:clamp(1.4rem,3.4vw,1.9rem); font-weight:800; letter-spacing:-.01em; margin-bottom:.5rem;
+  }
+  h2 .bang { color:var(--duck); }
+  .sub { color:var(--muted); font-size:.95rem; line-height:1.65; max-width:70ch; margin-bottom:1.8rem; }
+  .prose p { color:rgba(253,244,249,.85); line-height:1.75; margin-bottom:1.1rem; max-width:72ch; font-size:1.02rem; }
+  .prose strong { color:var(--cream); font-weight:700; }
+
+  /* ---------- component rows ---------- */
+  .comp { border:1px solid var(--line); border-radius:16px; overflow:hidden; background:rgba(255,255,255,.035); }
+  .row {
+    display:flex; align-items:center; gap:.9rem; padding:1.05rem 1.3rem;
+    border-bottom:1px solid var(--line);
+  }
+  .row:last-child { border-bottom:none; }
+  .row .dot { width:9px; height:9px; border-radius:50%; flex:none; background:var(--nodata); }
+  .row .dot.ok{background:var(--ok);} .row .dot.warn{background:var(--warn);} .row .dot.down{background:var(--down);}
+  .row .name { font-weight:600; font-size:1rem; }
+  .row .desc { font-size:.78rem; color:var(--muted); margin-top:.15rem; }
+  .row .state {
+    margin-left:auto; font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
+    font-weight:700; color:var(--muted); white-space:nowrap;
+  }
+  .row .state.ok{color:var(--ok);} .row .state.warn{color:var(--warn);} .row .state.down{color:var(--down);}
+
+  /* ---------- uptime chart ---------- */
+  .chart-card { border:1px solid var(--line); border-radius:16px; background:rgba(255,255,255,.035); padding:1.4rem 1.3rem 1.1rem; }
+  .chart-head { display:flex; align-items:baseline; gap:.8rem; margin-bottom:1rem; flex-wrap:wrap; }
+  .chart-head .pct { font-size:1.9rem; font-weight:900; letter-spacing:-.02em; }
+  .chart-head .pct.nodata { color:var(--muted); }
+  .chart-head .lbl { font-size:.78rem; color:var(--muted); letter-spacing:.14em; text-transform:uppercase; font-weight:600; }
+  .bars { display:flex; gap:2px; align-items:stretch; height:44px; }
+  .bar { flex:1; min-width:2px; border-radius:2px; background:var(--nodata); transition:transform .12s ease; position:relative; }
+  .bar.ok{background:var(--ok);} .bar.warn{background:var(--warn);} .bar.down{background:var(--down);}
+  .bar:hover { transform:scaleY(1.12); }
+  .bar[data-tip]:hover::after {
+    content:attr(data-tip); position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
+    background:#000; color:var(--cream); font-size:.72rem; padding:.45rem .6rem; border-radius:6px;
+    white-space:nowrap; z-index:5; border:1px solid var(--line); pointer-events:none;
+  }
+  .axis { display:flex; justify-content:space-between; margin-top:.6rem; font-size:.72rem; color:var(--muted); letter-spacing:.06em; }
+  .legend { display:flex; gap:1.1rem; flex-wrap:wrap; margin-top:1rem; font-size:.75rem; color:var(--muted); }
+  .legend span { display:flex; align-items:center; gap:.4rem; }
+  .legend i { width:9px; height:9px; border-radius:2px; display:inline-block; }
+
+  /* ---------- notice ---------- */
+  .notice {
+    border:1px dashed rgba(244,180,0,.4); background:rgba(244,180,0,.07);
+    border-radius:14px; padding:1.1rem 1.25rem; margin-top:1.2rem;
+    font-size:.9rem; line-height:1.65; color:rgba(253,244,249,.86);
+  }
+  .notice b { color:var(--duck); }
+
+  /* ---------- incidents ---------- */
+  .inc { border-left:2px solid var(--line); padding:0 0 0 1.4rem; margin-bottom:2rem; position:relative; }
+  .inc::before { content:""; position:absolute; left:-5px; top:6px; width:8px; height:8px; border-radius:50%; background:var(--duck); }
+  .inc .date { font-size:.74rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); font-weight:600; }
+  .inc .title { font-weight:700; font-size:1.05rem; margin:.3rem 0 .6rem; }
+  .inc dl { display:grid; grid-template-columns:auto 1fr; gap:.35rem .9rem; font-size:.9rem; }
+  .inc dt { font-weight:700; color:var(--duck); white-space:nowrap; }
+  .inc dd { color:rgba(253,244,249,.82); line-height:1.6; }
+  .empty { color:var(--muted); font-size:.95rem; font-style:italic; }
+
+  /* ---------- method grid ---------- */
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; }
+  .cell { border:1px solid var(--line); border-radius:14px; padding:1.2rem; background:rgba(255,255,255,.035); }
+  .cell h3 { font-size:.75rem; letter-spacing:.2em; text-transform:uppercase; color:var(--duck); font-weight:700; margin-bottom:.55rem; }
+  .cell p { font-size:.88rem; color:var(--muted); line-height:1.6; }
+
+  footer {
+    margin-top:6rem; padding:2.5rem 0 3rem; border-top:1px solid var(--line);
+    text-align:center; font-size:.8rem; color:var(--muted); letter-spacing:.1em;
+  }
+  footer a { color:var(--duck); text-decoration:none; }
+  footer .suite { margin-top:.6rem; text-transform:uppercase; font-weight:600; letter-spacing:.24em; font-size:.72rem; }
+
+  @keyframes fadeUp { from{opacity:0; transform:translateY(22px);} to{opacity:1; transform:translateY(0);} }
+  @media (prefers-reduced-motion:reduce){ *{animation:none !important;} html{scroll-behavior:auto;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== HERO ===== -->
+  <header class="hero">
+    <img class="duck" src="assets/duck-detective.png" alt="Duck Detector — the twack! platform watchdog">
+    <p class="eyebrow">Independent availability monitoring</p>
+    <h1>duck detector<span class="bang">!</span></h1>
+    <p class="tagline">We watch the ducks. Somebody has to.</p>
+
+    <div class="banner nodata" id="banner">
+      <span class="dot"></span>
+      <span class="msg" id="banner-msg">Loading status…</span>
+      <span class="ts" id="banner-ts"></span>
+    </div>
+  </header>
+
+  <!-- ===== WHAT IT IS ===== -->
+  <section id="about">
+    <h2>What this is</h2>
+    <div class="prose">
+      <p>
+        <strong>Duck Detector is the watchdog for the twack! suite</strong> — the text, email and voice
+        platform behind twack!, smack! and qwack!. It exists to answer one question honestly, at any hour,
+        without us being asked: <strong>is the platform actually working right now?</strong>
+      </p>
+      <p>
+        Most status pages are marketing. They are hosted on the same infrastructure they claim to monitor,
+        which means when the platform goes down, the page that would have told you goes down with it.
+        Duck Detector is deliberately built the other way around: <strong>it runs off our cloud entirely</strong>,
+        on infrastructure that shares no server, no network and no account with the systems it watches.
+        If we go dark, this page stays lit — and tells you so.
+      </p>
+      <p>
+        The design principle is simple: <strong>every watcher is itself watched, and no alert path shares a
+        failure domain with the thing it monitors.</strong> Checks that quietly stop running are the most
+        dangerous kind of failure, so the watchers report in even when everything is fine. Silence is treated
+        as a fault, not as good news.
+      </p>
+      <p>
+        Everything published here is <strong>measured, not asserted.</strong> We do not round up, and we do not
+        quietly redefine "down." When we eventually commit to a service level, the number will come from the
+        history below — not from a brochure.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== LIVE STATUS ===== -->
+  <section id="status">
+    <h2>Live status</h2>
+    <p class="sub">
+      Current state of each component of the platform. Probed continuously from outside our infrastructure.
+    </p>
+    <div class="comp" id="components">
+      <div class="row"><span class="dot"></span><div><div class="name">Loading components…</div></div></div>
+    </div>
+
+    <p class="sub" style="margin-top:2rem; margin-bottom:1rem;">
+      <strong style="color:var(--cream)">Upstream dependencies.</strong> These are third-party carriers and
+      platforms in the message path. We report their state for transparency, but we do not control them —
+      and they are excluded from our own service-level measurement.
+    </p>
+    <div class="comp" id="upstream"></div>
+  </section>
+
+  <!-- ===== UPTIME ===== -->
+  <section id="uptime">
+    <h2>Measured uptime</h2>
+    <p class="sub">
+      One bar per day. Colour reflects the worst state observed that day. Hover any bar for detail.
+    </p>
+    <div class="chart-card">
+      <div class="chart-head">
+        <span class="pct nodata" id="uptime-pct">—</span>
+        <span class="lbl" id="uptime-lbl">Awaiting data</span>
+      </div>
+      <div class="bars" id="bars"></div>
+      <div class="axis"><span id="axis-start">90 days ago</span><span>Today</span></div>
+      <div class="legend">
+        <span><i style="background:var(--ok)"></i> Operational</span>
+        <span><i style="background:var(--warn)"></i> Degraded</span>
+        <span><i style="background:var(--down)"></i> Outage</span>
+        <span><i style="background:var(--nodata)"></i> No data</span>
+      </div>
+    </div>
+    <div class="notice" id="sla-notice"></div>
+  </section>
+
+  <!-- ===== INCIDENTS ===== -->
+  <section id="incidents">
+    <h2>Incident history</h2>
+    <p class="sub">
+      Every incident is published in the same three parts: what we <b>detected</b>, what we <b>fixed</b>, and
+      what we <b>changed so it cannot recur</b>. We publish the prevention step because it is the only part
+      that actually matters to you.
+    </p>
+    <div id="incident-list"><p class="empty">No incidents recorded in the current measurement window.</p></div>
+  </section>
+
+  <!-- ===== METHODOLOGY ===== -->
+  <section id="method">
+    <h2>How we measure</h2>
+    <p class="sub">
+      Transparency means showing the method, not just the score. Here is exactly what is being checked and from where.
+    </p>
+    <div class="grid">
+      <div class="cell">
+        <h3>Liveness</h3>
+        <p>Each service is probed over HTTPS on a short interval. Catches hard-down, process death and TLS failure — but only proves a server answered.</p>
+      </div>
+      <div class="cell">
+        <h3>Synthetic transaction</h3>
+        <p>A real message is sent end-to-end through the live carrier path on a schedule and matched by a unique nonce on arrival. This is the check that proves the product actually works, not merely that a process is listening.</p>
+      </div>
+      <div class="cell">
+        <h3>Off-cloud watcher</h3>
+        <p>The probes run on independent infrastructure with no shared server, network or account with the monitored systems — so a total loss of our cloud cannot suppress the alarm.</p>
+      </div>
+      <div class="cell">
+        <h3>Dead-man's switch</h3>
+        <p>The watchers publish on a fixed heartbeat whether or not anything is wrong. A missing heartbeat is itself an alert: it means the monitor died, and we treat that as an outage of the monitor.</p>
+      </div>
+      <div class="cell">
+        <h3>Append-only ledger</h3>
+        <p>Every status write is committed to a public, timestamped, append-only history. Past results cannot be quietly rewritten to flatter a number.</p>
+      </div>
+      <div class="cell">
+        <h3>What we don't publish</h3>
+        <p>Raw logs, internal hostnames, IPs and file paths are never exposed here. Curated status is deliberate: an operational detail page is a reconnaissance surface.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>Duck Detector — the watchdog for <a href="https://qwack.app">twack! · smack! · qwack!</a></div>
+    <div class="suite">Built to be owned, not rented</div>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var STATUS_URL = 'status.json';   // committed by the off-cloud watcher
+  var WINDOW_DAYS = 90;
+
+  var STATE = {
+    operational:    { cls:'ok',     label:'Operational' },
+    degraded:       { cls:'warn',   label:'Degraded' },
+    partial_outage: { cls:'warn',   label:'Partial outage' },
+    major_outage:   { cls:'down',   label:'Major outage' },
+    maintenance:    { cls:'warn',   label:'Maintenance' },
+    no_data:        { cls:'nodata', label:'No data' }
+  };
+  function st(k) { return STATE[k] || STATE.no_data; }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+    });
+  }
+  function fmtDate(iso) {
+    var d = new Date(iso);
+    return isNaN(d) ? String(iso) : d.toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' });
+  }
+  function fmtTime(iso) {
+    var d = new Date(iso);
+    return isNaN(d) ? '' : d.toLocaleString(undefined, { dateStyle:'medium', timeStyle:'short' });
+  }
+
+  function rank(k) {
+    return { operational:0, maintenance:1, degraded:2, partial_outage:3, major_outage:4 }[k] || 0;
+  }
+
+  // ---------- renderers ----------
+  function renderBanner(data) {
+    var el = document.getElementById('banner');
+    var msg = document.getElementById('banner-msg');
+    var ts = document.getElementById('banner-ts');
+    var comps = data.components || [];
+
+    if (!comps.length) {
+      el.className = 'banner nodata';
+      msg.textContent = 'Monitoring not yet reporting';
+      ts.textContent = '';
+      return;
+    }
+    var known = comps.filter(function (c) { return c.status && c.status !== 'no_data'; });
+    if (!known.length) {
+      el.className = 'banner nodata';
+      msg.textContent = 'Awaiting first probe';
+      ts.textContent = data.generated_at ? 'Checked ' + fmtTime(data.generated_at) : '';
+      return;
+    }
+    var worst = known.reduce(function (a, c) { return rank(c.status) > rank(a.status) ? c : a; }, known[0]);
+    var cls = st(worst.status).cls;
+    el.className = 'banner ' + cls;
+    msg.textContent =
+      cls === 'ok'   ? 'All systems operational' :
+      cls === 'warn' ? 'Some systems degraded'   :
+                       'Service disruption in progress';
+    ts.textContent = data.generated_at ? 'Checked ' + fmtTime(data.generated_at) : '';
+  }
+
+  function renderRows(containerId, list) {
+    var box = document.getElementById(containerId);
+    if (!list || !list.length) { box.innerHTML = ''; box.style.display = 'none'; return; }
+    box.style.display = '';
+    box.innerHTML = list.map(function (c) {
+      var s = st(c.status);
+      return '<div class="row">' +
+        '<span class="dot ' + s.cls + '"></span>' +
+        '<div><div class="name">' + esc(c.name) + '</div>' +
+        (c.description ? '<div class="desc">' + esc(c.description) + '</div>' : '') +
+        '</div>' +
+        '<span class="state ' + s.cls + '">' + esc(s.label) + '</span>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderUptime(data) {
+    var hist = data.history || [];
+    var byDate = {};
+    hist.forEach(function (h) { byDate[h.date] = h; });
+
+    var bars = document.getElementById('bars');
+    var frag = '';
+    var withData = [];
+    var today = new Date();
+
+    for (var i = WINDOW_DAYS - 1; i >= 0; i--) {
+      var d = new Date(today.getTime() - i * 86400000);
+      var key = d.toISOString().slice(0, 10);
+      var h = byDate[key];
+      if (h && typeof h.uptime === 'number') {
+        withData.push(h.uptime);
+        var s = st(h.state || 'operational');
+        var tip = fmtDate(key) + ' — ' + h.uptime.toFixed(2) + '% · ' + s.label;
+        frag += '<div class="bar ' + s.cls + '" data-tip="' + esc(tip) + '"></div>';
+      } else {
+        frag += '<div class="bar" data-tip="' + esc(fmtDate(key) + ' — no data') + '"></div>';
+      }
+    }
+    bars.innerHTML = frag;
+
+    var pctEl = document.getElementById('uptime-pct');
+    var lblEl = document.getElementById('uptime-lbl');
+
+    if (!withData.length) {
+      pctEl.textContent = '—';
+      pctEl.className = 'pct nodata';
+      lblEl.textContent = 'Awaiting data';
+    } else {
+      var avg = withData.reduce(function (a, b) { return a + b; }, 0) / withData.length;
+      pctEl.textContent = avg.toFixed(3) + '%';
+      pctEl.className = 'pct';
+      lblEl.textContent = 'Measured over ' + withData.length + ' day' + (withData.length === 1 ? '' : 's');
+    }
+
+    var since = data.measuring_since;
+    document.getElementById('axis-start').textContent =
+      since ? 'Measuring since ' + fmtDate(since) : WINDOW_DAYS + ' days ago';
+
+    // SLA notice — deliberately honest about what the number does and doesn't mean.
+    var n = document.getElementById('sla-notice');
+    var sla = data.sla || {};
+    if (!withData.length) {
+      n.innerHTML = '<b>No uptime is being claimed yet.</b> The measurement layer is being brought online. ' +
+        'Rather than publish a number we cannot evidence, this chart stays empty until real probe data exists. ' +
+        'It will fill in day by day from the first probe onward.';
+    } else if (!sla.committed) {
+      n.innerHTML = '<b>Measured, but not yet a commitment.</b> The figure above is what we have actually ' +
+        'observed since ' + esc(since ? fmtDate(since) : 'measurement began') + '. We are not publishing a ' +
+        'contractual service level until we hold enough clean history to stand behind one. A service level is ' +
+        'a credit obligation, not a slogan.';
+    } else {
+      n.innerHTML = '<b>Service level: ' + esc(String(sla.target)) + '% uptime.</b> ' +
+        esc(sla.note || '') + ' The figure above is the measured result against that commitment.';
+    }
+  }
+
+  function renderIncidents(data) {
+    var list = document.getElementById('incident-list');
+    var inc = data.incidents || [];
+    if (!inc.length) {
+      list.innerHTML = '<p class="empty">No incidents recorded in the current measurement window.</p>';
+      return;
+    }
+    list.innerHTML = inc.map(function (i) {
+      return '<div class="inc">' +
+        '<div class="date">' + esc(fmtDate(i.date)) + ' · ' + esc(i.state || 'resolved') + '</div>' +
+        '<div class="title">' + esc(i.title) + '</div>' +
+        '<dl>' +
+          (i.detected  ? '<dt>Detected</dt><dd>'  + esc(i.detected)  + '</dd>' : '') +
+          (i.fixed     ? '<dt>Fixed</dt><dd>'     + esc(i.fixed)     + '</dd>' : '') +
+          (i.prevented ? '<dt>Prevented</dt><dd>' + esc(i.prevented) + '</dd>' : '') +
+        '</dl>' +
+      '</div>';
+    }).join('');
+  }
+
+  function renderAll(data) {
+    renderBanner(data);
+    renderRows('components', data.components);
+    renderRows('upstream', data.upstream);
+    renderUptime(data);
+    renderIncidents(data);
+  }
+
+  function failClosed(err) {
+    // If we cannot read the feed we say so. We never fabricate a green state.
+    var el = document.getElementById('banner');
+    el.className = 'banner warn';
+    document.getElementById('banner-msg').textContent = 'Status feed unreachable';
+    document.getElementById('banner-ts').textContent = 'The monitor may be down — this is not a claim of health';
+    document.getElementById('components').innerHTML =
+      '<div class="row"><span class="dot warn"></span><div><div class="name">Status feed could not be loaded</div>' +
+      '<div class="desc">This page is intentionally unable to report "healthy" without data.</div></div></div>';
+    renderUptime({ history: [] });
+    if (window.console) console.warn('Duck Detector: status feed error', err);
+  }
+
+  fetch(STATUS_URL, { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(renderAll)
+    .catch(failClosed);
+})();
+</script>
+</body>
+</html>
