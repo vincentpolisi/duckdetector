@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-07-11T20:18:04.464Z",
+  "generated_at": "2026-07-11T20:41:43.051Z",
   "measuring_since": "2026-07-11",
   "sla": {
     "committed": false,
@@ -11,32 +11,26 @@
     {
       "id": "sms-inbound",
       "name": "Inbound SMS",
-      "description": "",
+      "description": "Text arrives from a carrier and lands in the correct Slack channel",
       "status": "operational"
     },
     {
       "id": "sms-outbound",
       "name": "Outbound SMS",
-      "description": "",
+      "description": "Message sent from Slack is accepted by the carrier",
       "status": "operational"
     },
     {
       "id": "admin",
       "name": "Admin console",
-      "description": "",
+      "description": "Routing and blocklist administration",
       "status": "operational"
     },
     {
       "id": "email-platform",
       "name": "Email platform (smack!)",
-      "description": "",
+      "description": "Outbound email sending and list management",
       "status": "operational"
-    },
-    {
-      "id": "voice",
-      "name": "Voice (qwack!)",
-      "description": "",
-      "status": "no_data"
     },
     {
       "id": "delivery-receipts",
@@ -67,8 +61,8 @@
   ],
   "history": [
     {
-      "date": "Sat Jul 11",
-      "uptime": 80,
+      "date": "2026-07-11",
+      "uptime": 88.889,
       "state": "major_outage",
       "incidents": 1
     }
