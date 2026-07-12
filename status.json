@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-07-12T04:00:18.315Z",
+  "generated_at": "2026-07-12T04:26:41.423Z",
   "measuring_since": "2026-07-12",
   "sla": {
     "committed": false,
@@ -36,13 +36,13 @@
       "id": "message-delivery",
       "name": "End-to-end message delivery",
       "description": "A real test message sent through the live carrier path arrived in Slack, verified by unique nonce",
-      "status": "major_outage"
+      "status": "operational"
     },
     {
       "id": "delivery-receipts",
       "name": "Delivery receipts",
       "description": "Carrier delivery and failure receipts are received and reported",
-      "status": "major_outage"
+      "status": "operational"
     },
     {
       "id": "email-gateway",
@@ -68,7 +68,7 @@
   "history": [
     {
       "date": "2026-07-12",
-      "uptime": 99.2,
+      "uptime": 99.315,
       "state": "degraded",
       "incidents": 1
     }
