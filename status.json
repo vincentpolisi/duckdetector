@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-07-12T02:30:17.986Z",
+  "generated_at": "2026-07-12T03:01:20.953Z",
   "measuring_since": "2026-07-12",
   "sla": {
     "committed": false,
@@ -10,14 +10,14 @@
   "components": [
     {
       "id": "sms-inbound",
-      "name": "Inbound SMS",
-      "description": "Text arrives from a carrier and lands in the correct Slack channel",
+      "name": "Inbound SMS service",
+      "description": "The service that receives texts is reachable and responding",
       "status": "operational"
     },
     {
       "id": "sms-outbound",
-      "name": "Outbound SMS",
-      "description": "Message sent from Slack is accepted by the carrier",
+      "name": "Outbound SMS service",
+      "description": "The service that sends texts is reachable and responding",
       "status": "operational"
     },
     {
@@ -33,10 +33,16 @@
       "status": "operational"
     },
     {
+      "id": "message-delivery",
+      "name": "End-to-end message delivery",
+      "description": "A real test message sent through the live carrier path arrived in Slack, verified by unique nonce",
+      "status": "major_outage"
+    },
+    {
       "id": "delivery-receipts",
       "name": "Delivery receipts",
       "description": "Carrier delivery and failure receipts are received and reported",
-      "status": "no_data"
+      "status": "major_outage"
     },
     {
       "id": "email-gateway",
@@ -62,9 +68,9 @@
   "history": [
     {
       "date": "2026-07-12",
-      "uptime": 100,
-      "state": "operational",
-      "incidents": 0
+      "uptime": 98.462,
+      "state": "degraded",
+      "incidents": 1
     }
   ],
   "incidents": []
