@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-07-12T04:31:21.157Z",
+  "generated_at": "2026-07-12T04:37:28.318Z",
   "measuring_since": "2026-07-12",
   "sla": {
     "committed": false,
@@ -36,13 +36,13 @@
       "id": "message-delivery",
       "name": "End-to-end message delivery",
       "description": "A real test message sent through the live carrier path arrived in Slack, verified by unique nonce",
-      "status": "operational"
+      "status": "no_data"
     },
     {
       "id": "delivery-receipts",
       "name": "Delivery receipts",
       "description": "Carrier delivery and failure receipts are received and reported",
-      "status": "operational"
+      "status": "no_data"
     },
     {
       "id": "email-gateway",
@@ -56,21 +56,21 @@
       "id": "twilio",
       "name": "Twilio",
       "description": "Carrier for SMS, MMS and voice — third party, outside our control",
-      "status": "operational"
+      "status": "no_data"
     },
     {
       "id": "slack",
       "name": "Slack",
       "description": "Message interface — third party, outside our control",
-      "status": "operational"
+      "status": "no_data"
     }
   ],
   "history": [
     {
       "date": "2026-07-12",
-      "uptime": 99.333,
-      "state": "degraded",
-      "incidents": 1
+      "uptime": 100,
+      "state": "operational",
+      "incidents": 0
     }
   ],
   "incidents": []
