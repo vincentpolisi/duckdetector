@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-08-20T00:30:24.401Z",
+  "generated_at": "2026-08-20T01:30:28.458Z",
   "measuring_since": "2026-07-12",
   "sla": {
     "committed": false,
@@ -56,7 +56,7 @@
       "id": "twilio",
       "name": "Twilio",
       "description": "Carrier for SMS, MMS and voice — third party, outside our control",
-      "status": "degraded"
+      "status": "operational"
     },
     {
       "id": "slack",
