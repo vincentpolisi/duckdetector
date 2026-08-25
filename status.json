@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-08-25T14:52:37.022Z",
+  "generated_at": "2026-08-25T14:57:35.433Z",
   "measuring_since": "2026-07-12",
   "sla": {
     "committed": false,
@@ -12,13 +12,13 @@
       "id": "sms-inbound",
       "name": "Inbound SMS service",
       "description": "The service that receives texts is reachable and responding",
-      "status": "major_outage"
+      "status": "operational"
     },
     {
       "id": "sms-outbound",
       "name": "Outbound SMS service",
       "description": "The service that sends texts is reachable and responding",
-      "status": "major_outage"
+      "status": "operational"
     },
     {
       "id": "admin",
@@ -332,7 +332,7 @@
     },
     {
       "date": "2026-08-25",
-      "uptime": 99.441,
+      "uptime": 99.444,
       "state": "degraded",
       "incidents": 4
     }
