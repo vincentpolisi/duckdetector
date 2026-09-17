@@ -507,7 +507,7 @@
     if (window.console) console.warn('Duck Detector: status feed error', err);
   }
 
-  fetch(STATUS_URL, { cache: 'no-store' })
+  fetch(STATUS_URL + '?t=' + Date.now(), { cache: 'no-store' })
     .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
     .then(renderAll)
     .catch(failClosed);
