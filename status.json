@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-09-30T15:17:34.615Z",
+  "generated_at": "2026-09-30T15:22:37.783Z",
   "measuring_since": "2026-07-12",
   "sla": {
     "committed": false,
@@ -548,7 +548,7 @@
     },
     {
       "date": "2026-09-30",
-      "uptime": 99.864,
+      "uptime": 99.865,
       "state": "degraded",
       "incidents": 1
     }
