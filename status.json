@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-10-13T08:30:34.521Z",
+  "generated_at": "2026-10-13T08:32:37.646Z",
   "measuring_since": "2026-07-12",
   "sla": {
     "committed": false,
@@ -62,7 +62,7 @@
       "id": "slack",
       "name": "Slack",
       "description": "Message interface — third party, outside our control",
-      "status": "operational"
+      "status": "degraded"
     }
   ],
   "history": [
