@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "generated_at": "2026-10-17T23:57:32.867Z",
+  "generated_at": "2026-10-18T00:02:33.342Z",
   "measuring_since": "2026-07-12",
   "sla": {
     "committed": false,
@@ -66,12 +66,6 @@
     }
   ],
   "history": [
-    {
-      "date": "2026-07-20",
-      "uptime": 100,
-      "state": "operational",
-      "incidents": 0
-    },
     {
       "date": "2026-07-21",
       "uptime": 100,
@@ -602,6 +596,12 @@
     },
     {
       "date": "2026-10-17",
+      "uptime": 100,
+      "state": "operational",
+      "incidents": 0
+    },
+    {
+      "date": "2026-10-18",
       "uptime": 100,
       "state": "operational",
       "incidents": 0
